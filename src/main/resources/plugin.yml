@@ -1,0 +1,13 @@
+name: DuckDNS
+main: me.steve8playz.DuckDNS
+version: 1.0
+description: Updates the IP on DuckDNS to your Minecraft server's IP
+author: Steve8Playz
+api-version: 1.15
+commands:
+  UpdateIP:
+    description: Updates the IP on DuckDNS
+    usage: /<command> [ip]
+    permission: DuckDNS.update
+    permission-message: You don't have permission to use this command!
+    default: false
