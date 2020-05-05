@@ -1,4 +1,26 @@
-# The Configuration File for Steve's DuckDNS Plugin
+# The Configuration File for Steve's DynamicDNS Plugin
 period: 3600
-domain: exampledomain
-token: a7c4d0ad-114e-40ef-ba1d-d217904a50f2
+
+afraid:
+  enabled: false
+  token: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+duckdns:
+  enabled: false
+  domain: exampledomain
+  token: a7c4d0ad-114e-40ef-ba1d-d217904a50f2
+
+dynu:
+  enabled: false
+  hostname: example.ddnsfree.com
+  password: password as plaintext, md5 or sha256
+
+noip:
+  enabled: false
+  hostname: example.ddnsfree.com
+  username: username
+  password: password
+
+custom:
+  enabled: false
+  url: https://example.com/?ip=%ip%
