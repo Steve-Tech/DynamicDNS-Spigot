@@ -1,4 +1,4 @@
-package me.steve8playz;
+package me.stevetech;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -183,8 +183,8 @@ public class DynamicDNS extends JavaPlugin implements Listener {
 
     @Override
     public boolean onCommand(final CommandSender sender, Command cmd, String label, String[] args) {
-        if ((cmd.getName().equalsIgnoreCase("updateip")) && (sender.hasPermission("duckdns.update"))) {
-            if ((args.length == 1) && (sender.hasPermission("duckdns.update.ip"))) {
+        if ((cmd.getName().equalsIgnoreCase("updateip")) && (sender.hasPermission("DynamicDNS.update"))) {
+            if ((args.length == 1) && (sender.hasPermission("DynamicDNS.update.ip"))) {
                 Bukkit.getServer().getScheduler().runTaskAsynchronously(this, () -> {
                     if (updateIP(args[0]) && sender instanceof Player) {
                         sender.sendMessage(messagePrefix + "Updated IP.");
