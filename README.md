@@ -30,7 +30,7 @@ noip:
   username: username # The username to your account
   password: password # The password to your account (sadly they don't support hashed passwords)
 
-namecheap
+namecheap:
   enabled: false
   subdomain: subdomain of server, use @ if none
   domain: exampledomain.com
