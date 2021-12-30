@@ -28,7 +28,8 @@ public class DynamicDNS extends JavaPlugin implements Listener {
                 getConfig().getBoolean("duckdns.enabled") ||
                 getConfig().getBoolean("dynu.enabled") ||
                 getConfig().getBoolean("noip.enabled") ||
-                getConfig().getBoolean("custom.enabled"))) {
+                getConfig().getBoolean("custom.enabled")  ||
+                getConfig().getBoolean("namecheap.enabled"))) {
             getLogger().warning("No DDNS services are enabled, Disabling Plugin");
             this.getPluginLoader().disablePlugin(this);
         } else updateIPTimer();
@@ -131,6 +132,30 @@ public class DynamicDNS extends JavaPlugin implements Listener {
         }
         return false;
     }
+
+    public boolean updateNameCheap(String subdomain, String domain, String token, String ip) {
+        try {
+            URL url = new URL("https://dynamicdns.park-your-domain.com/update?host=" + subdomain + "&domain=" + domain + "&password=" + token + "&ip=" + ip);
+
+            getLogger().info(url.toString());
+
+            URLConnection conn = url.openConnection();
+            conn.connect();
+            String data = new BufferedReader(new InputStreamReader(conn.getInputStream())).readLine();
+            if(!data.isEmpty()) {
+
+                getLogger().info("Updated IP on Namecheap");
+                return true;
+            } else {
+                getLogger().warning("Error updating IP on Namecheap");
+                return false;
+            }
+
+        } catch (Exception e) {
+            getLogger().severe(e.getMessage());
+        }
+        return false;
+    }
     public boolean updateCustom(String updateURL, String ip) {
         try {
             URL url = new URL(updateURL.replaceAll("(?i)%ip%", ip));
@@ -171,6 +196,11 @@ public class DynamicDNS extends JavaPlugin implements Listener {
         }
         if (getConfig().getBoolean("custom.enabled")) {
             if (!updateCustom(getConfig().getString("custom.url"), ip)) {
+                success = false;
+            }
+        }
+        if (getConfig().getBoolean("namecheap.enabled")) {
+            if (!updateNameCheap(getConfig().getString("namecheap.subdomain"), getConfig().getString("namecheap.domain"), getConfig().getString("namecheap.token"), ip)) {
                 success = false;
             }
         }
