@@ -30,6 +30,12 @@ noip:
   username: username # The username to your account
   password: password # The password to your account (sadly they don't support hashed passwords)
 
+namecheap:
+  enabled: false
+  subdomain: subdomain of server, use @ if none
+  domain: exampledomain.com
+  token: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx # The token under the "Advanced DNS" Section in your namecheap domain list
+
 custom:
   enabled: false
   url: https://example.com/?ip=%ip% # The URL to your custom DDNS service, %ip% will be replaced with an ip given as an argument to /updateip [IP]
