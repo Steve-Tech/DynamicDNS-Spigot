@@ -21,6 +21,19 @@ noip:
   username: username
   password: password
 
+namecheap:
+  enabled: false
+  subdomain: @
+  domain: exampledomain.com
+  token: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+cloudflare:
+  enabled: false
+  name: example.com
+  zone_id: 023e105f4ecef8ad9ca31a8372d0c353
+  record_id: null
+  token: 21f72dee0e91a40be0a5964f6695fa8c
+
 custom:
   enabled: false
   url: https://example.com/?ip=%ip%

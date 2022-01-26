@@ -1,8 +1,8 @@
 name: DynamicDNS
-main: me.stevetech.DynamicDNS
-version: 1.1
+main: me.stevetech.dynamicdns.DynamicDNS
+version: 2.0
 description: A dynamic DNS plugin for Spigot
-author: Steve8Playz
+author: Steve-Tech
 api-version: 1.15
 commands:
   UpdateIP:

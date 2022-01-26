@@ -32,9 +32,16 @@ noip:
 
 namecheap:
   enabled: false
-  subdomain: subdomain of server, use @ if none
+  subdomain: @ # subdomain of server, use @ if none
   domain: exampledomain.com
   token: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx # The token under the "Advanced DNS" Section in your namecheap domain list
+
+cloudflare:
+  enabled: false
+  name: example.com # The dns record name to get the record ID for
+  zone_id: 023e105f4ecef8ad9ca31a8372d0c353 # The Zone ID from the Cloudflare Dash
+  record_id: null # The ID of the record from the API, leave null to populate automatically
+  token: 21f72dee0e91a40be0a5964f6695fa8c # The API Token generated from the Cloudflare Dash, needs DNS Edit permissions
 
 custom:
   enabled: false
