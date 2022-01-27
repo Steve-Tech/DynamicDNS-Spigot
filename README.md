@@ -32,7 +32,7 @@ noip:
 
 namecheap:
   enabled: false
-  subdomain: @ # subdomain of server, use @ if none
+  subdomain: '@' # subdomain of server, use '@' if none
   domain: exampledomain.com
   token: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx # The token under the "Advanced DNS" Section in your namecheap domain list
 

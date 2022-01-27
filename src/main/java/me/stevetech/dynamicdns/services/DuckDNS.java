@@ -20,6 +20,11 @@ public class DuckDNS extends DDNSService {
     }
 
     @Override
+    public String name() {
+        return "DuckDNS";
+    }
+
+    @Override
     public boolean enabled() {
         return plugin.getConfig().getBoolean("duckdns.enabled");
     }

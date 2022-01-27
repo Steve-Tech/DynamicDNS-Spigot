@@ -20,6 +20,11 @@ public class NameCheap extends DDNSService {
     }
 
     @Override
+    public String name() {
+        return "NameCheap";
+    }
+
+    @Override
     public boolean enabled() {
         return plugin.getConfig().getBoolean("namecheap.enabled");
     }

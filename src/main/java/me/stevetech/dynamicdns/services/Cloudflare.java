@@ -1,18 +1,19 @@
 package me.stevetech.dynamicdns.services;
 
 import com.google.gson.Gson;
-import me.stevetech.dynamicdns.DynamicDNS;
 import me.stevetech.dynamicdns.DDNSService;
+import me.stevetech.dynamicdns.DynamicDNS;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
+import java.net.URI;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -26,6 +27,11 @@ public class Cloudflare extends DDNSService {
 
     public Cloudflare(DynamicDNS plugin) {
         this.plugin = plugin;
+    }
+
+    @Override
+    public String name() {
+        return "Cloudflare";
     }
 
     @Override
@@ -52,7 +58,7 @@ public class Cloudflare extends DDNSService {
                 Map<?, ?> json = gson.fromJson(data, Map.class);
 
                 if (((Boolean) json.get("success")) && ((ArrayList<?>) json.get("result")).size() > 0) {
-                    plugin.getConfig().set("cloudflare.zone_id", ((Map<?, ?>) ((ArrayList<?>) json.get("result")).get(0)).get("id"));
+                    plugin.getConfig().set("cloudflare.record_id", ((Map<?, ?>) ((ArrayList<?>) json.get("result")).get(0)).get("id"));
                     plugin.saveConfig();
                 } else {
                     plugin.getLogger().severe("An error occured setting up Cloudflare");
@@ -67,10 +73,11 @@ public class Cloudflare extends DDNSService {
 
     /**
      * Formats the IP from cloudflare's cdn-cgi/trace
-     * @param   ip_url the url to get the ip from, e.g. https://1.1.1.1/cdn-cgi/trace
-     * @return  the ip as a string
-     * @see     #getIP() for getting IPv4 from 1.1.1.1
-     * @see     #getIPv6() for getting IPv6 from 2606:4700:4700::1111
+     *
+     * @param ip_url the url to get the ip from, e.g. https://1.1.1.1/cdn-cgi/trace
+     * @return the ip as a string
+     * @see #getIP() for getting IPv4 from 1.1.1.1
+     * @see #getIPv6() for getting IPv6 from 2606:4700:4700::1111
      */
     public String getIP(String ip_url) throws IOException {
         URL url = new URL(ip_url);
@@ -101,34 +108,32 @@ public class Cloudflare extends DDNSService {
     @Override
     public boolean update(String ip) {
         String zone_id = plugin.getConfig().getString("cloudflare.zone_id");
-        String record_id = plugin.getConfig().getString("cloudflare.zone_id");
-        String token = plugin.getConfig().getString("cloudflare.zone_id");
+        String record_id = plugin.getConfig().getString("cloudflare.record_id");
+        String token = plugin.getConfig().getString("cloudflare.token");
 
         try {
-            if (ip == null) {
+            if (ip.isEmpty()) {
                 ip = getIP();
             }
 
-            URL url = new URL("https://api.cloudflare.com/client/v4/zones/" + zone_id + "/dns_records/" + record_id);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setDoOutput(true);
-            conn.setRequestMethod("PATCH");
-            conn.setRequestProperty("Content-Type", "application/json");
-            conn.setRequestProperty("Authorization", "Bearer " + token);
-            OutputStreamWriter out = new OutputStreamWriter(conn.getOutputStream());
             final String finalIp = ip;
-            out.write(gson.toJson(new HashMap<String, Object>() {{
-                put("content", finalIp);
-            }}));
-            out.close();
 
-            String data = new BufferedReader(new InputStreamReader(conn.getInputStream())).readLine();
+            // PATCH isn't supported by HttpURLConnection, HttpRequest requires Java 11, but fine.
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create("https://api.cloudflare.com/client/v4/zones/" + zone_id + "/dns_records/" + record_id))
+                    .method("PATCH",
+                            HttpRequest.BodyPublishers.ofString(
+                                    "{\"content\":\"" + finalIp + "\"}"
+                            ))
+                    .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + token)
+                    .build();
 
-            System.out.println(data);
+            HttpResponse<String> response = HttpClient.newHttpClient().send(request, HttpResponse.BodyHandlers.ofString());
 
-            Map<?, ?> json = gson.fromJson(data, Map.class);
+            Map<?, ?> json = gson.fromJson(response.body(), Map.class);
 
-            if ((Boolean) json.get("success")) {
+            if (response.statusCode() == 200 && (Boolean) json.get("success")) {
                 plugin.getLogger().info("Updated IP on Cloudflare");
                 return true;
             } else {

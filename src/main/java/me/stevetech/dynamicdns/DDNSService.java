@@ -7,6 +7,13 @@ package me.stevetech.dynamicdns;
 public class DDNSService {
 
     /**
+     * The name of the service, shown in lists of enabled services
+     */
+    public String name() {
+        return "Service";
+    }
+
+    /**
      * Should return whether the service is enabled in the config
      */
     public boolean enabled() {

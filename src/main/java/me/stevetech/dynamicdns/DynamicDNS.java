@@ -8,6 +8,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -26,6 +28,8 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class DynamicDNS extends JavaPlugin implements Listener {
 
     private final String messagePrefix = ChatColor.GOLD + "[DynamicDNS] " + ChatColor.RESET;
+
+    private BukkitTask task;
 
     public ArrayList<DDNSService> services = new ArrayList<>();
     // In theory, other plugins can add their own service by adding to this ArrayList
@@ -77,30 +81,60 @@ public class DynamicDNS extends JavaPlugin implements Listener {
     }
 
     private void updateIPTimer() {
-        Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(this, () -> updateIP(""), (0), (getConfig().getInt("period") * 20L));
+        if (task != null) {
+            task.cancel();
+        }
+        task = Bukkit.getServer().getScheduler().runTaskTimerAsynchronously(this, () -> updateIP(""), (0), (getConfig().getInt("period") * 20L));
     }
 
     @Override
     public boolean onCommand(final CommandSender sender, Command cmd, String label, String[] args) {
-        if ((cmd.getName().equalsIgnoreCase("updateip")) && (sender.hasPermission("DynamicDNS.update"))) {
-            if ((args.length == 1) && (sender.hasPermission("DynamicDNS.update.ip"))) {
-                Bukkit.getServer().getScheduler().runTaskAsynchronously(this, () -> {
-                    if (updateIP(args[0]) && sender instanceof Player) {
-                        sender.sendMessage(messagePrefix + "Updated IP.");
-                    } else if (sender instanceof Player) {
-                        sender.sendMessage(messagePrefix + "Error updating IP, check the log for details.");
-                    }
-                });
-            } else {
-                Bukkit.getServer().getScheduler().runTaskAsynchronously(this, () -> {
-                    if (updateIP("") && sender instanceof Player) {
-                        sender.sendMessage(messagePrefix + "Updated IP.");
-                    } else if (sender instanceof Player) {
-                        sender.sendMessage(messagePrefix + "Error updating IP, check the log for details.");
-                    }
-                });
+        if ((cmd.getName().equalsIgnoreCase("dynamicdns")) && (sender.hasPermission("DynamicDNS"))) {
+            if (args.length > 0) {
+                switch (args[0]) {
+                    case "update":
+                        if (sender.hasPermission("DynamicDNS.update")) {
+                            if ((args.length > 2) && (sender.hasPermission("DynamicDNS.update.ip"))) {
+                                Bukkit.getServer().getScheduler().runTaskAsynchronously(this, () -> {
+                                    if (updateIP(args[0]) && sender instanceof Player) {
+                                        sender.sendMessage(messagePrefix + "Updated IP.");
+                                    } else if (sender instanceof Player) {
+                                        sender.sendMessage(messagePrefix + "Error updating IP, check the log for details.");
+                                    }
+                                });
+                            } else {
+                                Bukkit.getServer().getScheduler().runTaskAsynchronously(this, () -> {
+                                    if (updateIP("") && sender instanceof Player) {
+                                        sender.sendMessage(messagePrefix + "Updated IP.");
+                                    } else if (sender instanceof Player) {
+                                        sender.sendMessage(messagePrefix + "Error updating IP, check the log for details.");
+                                    }
+                                });
+                            }
+                        }
+                        return true;
+                    case "list":
+                        if (sender.hasPermission("DynamicDNS.list")) {
+                            StringBuilder enabled = new StringBuilder();
+                            services.forEach(service -> {
+                                if (service.enabled()) {
+                                    enabled.append(service.name());
+                                    enabled.append(" ");
+                                }
+                            });
+                            sender.sendMessage(messagePrefix + "Loaded Services: " + enabled);
+                        }
+                        return true;
+                    case "reload":
+                        if (sender.hasPermission("DynamicDNS.reload")) {
+                            reloadConfig();
+                            updateIPTimer();
+                            sender.sendMessage(messagePrefix + "Reloaded Config");
+                        }
+                        return true;
+                }
             }
         }
-        return true;
+        return false;
     }
 }

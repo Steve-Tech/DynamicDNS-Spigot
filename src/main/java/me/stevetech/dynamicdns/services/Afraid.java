@@ -20,8 +20,13 @@ public class Afraid extends DDNSService {
     }
 
     @Override
+    public String name() {
+        return "Afraid";
+    }
+
+    @Override
     public boolean enabled() {
-        return plugin.getConfig().getBoolean("cloudflare.enabled");
+        return plugin.getConfig().getBoolean("afraid.enabled");
     }
 
     @Override

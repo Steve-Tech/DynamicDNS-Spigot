@@ -22,6 +22,11 @@ public class NoIP extends DDNSService {
     }
 
     @Override
+    public String name() {
+        return "NoIP";
+    }
+
+    @Override
     public boolean enabled() {
         return plugin.getConfig().getBoolean("noip.enabled");
     }

@@ -20,6 +20,11 @@ public class Custom extends DDNSService {
     }
 
     @Override
+    public String name() {
+        return "Custom";
+    }
+
+    @Override
     public boolean enabled() {
         return plugin.getConfig().getBoolean("custom.enabled");
     }

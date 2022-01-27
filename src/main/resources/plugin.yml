@@ -3,11 +3,12 @@ main: me.stevetech.dynamicdns.DynamicDNS
 version: 2.0
 description: A dynamic DNS plugin for Spigot
 author: Steve-Tech
-api-version: 1.15
+api-version: 1.13
 commands:
-  UpdateIP:
-    description: Updates the IP on your DDNS Services
-    usage: /<command> [ip]
-    permission: DynamicDNS.update
+  dynamicdns:
+    aliases: [ddns]
+    description: DynamicDNS Command
+    usage: /<command> <update|list|reload> [ip]
+    permission: DynamicDNS
     permission-message: You don't have permission to use this command!
     default: false

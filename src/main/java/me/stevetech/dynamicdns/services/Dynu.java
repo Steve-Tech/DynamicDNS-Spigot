@@ -20,6 +20,11 @@ public class Dynu extends DDNSService {
     }
 
     @Override
+    public String name() {
+        return "Dynu";
+    }
+
+    @Override
     public boolean enabled() {
         return plugin.getConfig().getBoolean("dynu.enabled");
     }

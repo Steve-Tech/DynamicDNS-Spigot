@@ -23,7 +23,7 @@ noip:
 
 namecheap:
   enabled: false
-  subdomain: @
+  subdomain: '@'
   domain: exampledomain.com
   token: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
