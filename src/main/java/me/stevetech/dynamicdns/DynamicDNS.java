@@ -8,16 +8,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Base64;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -89,12 +83,12 @@ public class DynamicDNS extends JavaPlugin implements Listener {
 
     @Override
     public boolean onCommand(final CommandSender sender, Command cmd, String label, String[] args) {
-        if ((cmd.getName().equalsIgnoreCase("dynamicdns")) && (sender.hasPermission("DynamicDNS"))) {
+        if ((cmd.getName().equalsIgnoreCase("dynamicdns")) && (sender.hasPermission("dynamicdns"))) {
             if (args.length > 0) {
                 switch (args[0]) {
                     case "update":
-                        if (sender.hasPermission("DynamicDNS.update")) {
-                            if ((args.length > 2) && (sender.hasPermission("DynamicDNS.update.ip"))) {
+                        if (sender.hasPermission("dynamicdns.update")) {
+                            if ((args.length > 2) && (sender.hasPermission("dynamicdns.update.ip"))) {
                                 Bukkit.getServer().getScheduler().runTaskAsynchronously(this, () -> {
                                     if (updateIP(args[0]) && sender instanceof Player) {
                                         sender.sendMessage(messagePrefix + "Updated IP.");
@@ -114,7 +108,7 @@ public class DynamicDNS extends JavaPlugin implements Listener {
                         }
                         return true;
                     case "list":
-                        if (sender.hasPermission("DynamicDNS.list")) {
+                        if (sender.hasPermission("dynamicdns.list")) {
                             StringBuilder enabled = new StringBuilder();
                             services.forEach(service -> {
                                 if (service.enabled()) {
@@ -126,7 +120,7 @@ public class DynamicDNS extends JavaPlugin implements Listener {
                         }
                         return true;
                     case "reload":
-                        if (sender.hasPermission("DynamicDNS.reload")) {
+                        if (sender.hasPermission("dynamicdns.reload")) {
                             reloadConfig();
                             updateIPTimer();
                             sender.sendMessage(messagePrefix + "Reloaded Config");
@@ -136,5 +130,23 @@ public class DynamicDNS extends JavaPlugin implements Listener {
             }
         }
         return false;
+    }
+
+    @Override
+    public List<String> onTabComplete(CommandSender sender, Command cmd, String alias, String[] args) {
+        if ((cmd.getName().equalsIgnoreCase("dynamicdns")) && (sender.hasPermission("dynamicdns"))) {
+            if (args.length == 1) {
+                return new ArrayList<>() {{
+                    if (sender.hasPermission("dynamicdns.update"))
+                        add("update");
+                    if (sender.hasPermission("dynamicdns.list"))
+                        add("list");
+                    if (sender.hasPermission("dynamicdns.reload"))
+                        add("reload");
+                }};
+            }
+            return new ArrayList<>();
+        }
+        return null;
     }
 }

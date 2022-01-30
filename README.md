@@ -1,10 +1,19 @@
 # DynamicDNS for Spigot  
 A dynamic DNS plugin for Spigot
 ### Commands:
-* /UpdateIP \[IP\] - Force updates the IP on your DDNS Services, the IP argument can also be used to overide the IP detection on the DDNS services (best to leave it blank)
-### Permissions:
-* /UpdateIP: DynamicDNS.update
-* /UpdateIP \[IP\]: DynamicDNS.update.ip
+* `/DynamicDNS <update|list|reload>` 
+  * `/DynamicDNS update [IP]`
+    * Description: Force updates the IP on your DDNS Services, the IP argument can also be used to overide the IP detection on the DDNS services (best to leave it blank)
+    * Permission: `dynamicdns.update`
+    * Default: `op` without IP or `false` with IP
+  * `/DynamicDNS list`
+    * Description: See enabled DDNS Services
+    * Permission: `dynamicdns.list`
+    * Default: `op`
+  * `/DynamicDNS reload`
+    * Description: Reload the DynamicDNS config
+    * Permission: `dynamicdns.reload`
+    * Default: `false`
 ### Config:
 ```yaml
 # The Configuration File for Steve's DynamicDNS Plugin  

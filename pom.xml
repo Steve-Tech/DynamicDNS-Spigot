@@ -25,6 +25,7 @@
                     <source>11</source>
                     <target>11</target>
                 </configuration>
+                <version>3.8.1</version>
             </plugin>
         </plugins>
     </build>
