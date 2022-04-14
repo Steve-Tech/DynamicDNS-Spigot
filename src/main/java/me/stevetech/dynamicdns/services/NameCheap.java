@@ -54,8 +54,7 @@ public class NameCheap extends DDNSService {
                     if (ddnsResponse.contains("<Description>Domain name not found</Description>")) {
                         plugin.getLogger().warning("Error updating IP on Namecheap, domain name \"" + domain + "\" not found");
                         return false;
-                    }
-                    if (ddnsResponse.contains("<Description>No Records updated. A record not Found;</Description>")) {
+                    } else if (ddnsResponse.contains("<Description>No Records updated. A record not Found;</Description>")) {
                         plugin.getLogger().warning("Error updating IP on Namecheap, no A record exists for subdomain \"" + subdomain + "\"");
                         return false;
                     } else if (ddnsResponse.contains("<Description>Passwords do not match</Description>")) {
