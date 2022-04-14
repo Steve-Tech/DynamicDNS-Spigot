@@ -41,7 +41,7 @@ noip:
 
 namecheap:
   enabled: false
-  subdomain: '@' # subdomain of server, use '@' if none
+  subdomain: @ # subdomain of server, multiple subdomains can be updated if separated by a comma ',' e.g. mc,map
   domain: exampledomain.com
   token: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx # The token under the "Advanced DNS" Section in your namecheap domain list
 
