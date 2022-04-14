@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -59,11 +60,12 @@ public class NameCheap extends DDNSService {
                         return false;
                     } else if (ddnsResponse.contains("<Description>Passwords do not match</Description>")) {
                         plugin.getLogger().warning("Error updating IP on Namecheap, password is incorrect");
-                        return false;
                     }
                 } else {
                     plugin.getLogger().info("Updated IP for " + subdomain + "." + domain + " on namecheap");
-                    return true;
+                    if(Objects.equals(subdomain, subdomains[subdomains.length - 1])) {
+                        return true;
+                    }
                 }
 
             } catch (Exception e) {
