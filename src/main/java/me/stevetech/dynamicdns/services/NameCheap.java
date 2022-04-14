@@ -7,6 +7,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.stream.Collectors;
 
 /**
  * @author LethalBoar70923
@@ -31,25 +32,42 @@ public class NameCheap extends DDNSService {
 
     @Override
     public boolean update(String ip) {
-        String subdomain = plugin.getConfig().getString("namecheap.subdomain");
+
+        //Ternary operation to check if more than 1 subdomain is provided
+        String[] subdomains = (plugin.getConfig().getString("namecheap.subdomain").split(",").length > 1) ?
+                plugin.getConfig().getString("namecheap.subdomain").split(",")
+                : new String[]{plugin.getConfig().getString("namecheap.subdomain")};
         String domain = plugin.getConfig().getString("namecheap.domain");
         String token = plugin.getConfig().getString("namecheap.token");
-        try {
-            URL url = new URL("https://dynamicdns.park-your-domain.com/update?host=" + subdomain + "&domain=" + domain + "&password=" + token + "&ip=" + ip);
-            URLConnection conn = url.openConnection();
-            conn.connect();
-            String data = new BufferedReader(new InputStreamReader(conn.getInputStream())).readLine();
 
-            if (!data.isEmpty()) {
-                plugin.getLogger().info("Updated IP on Namecheap");
-                return true;
-            } else {
-                plugin.getLogger().warning("Error updating IP on Namecheap");
-                return false;
+        for (String subdomain : subdomains) {
+            try {
+                URL url = new URL("https://dynamicdns.park-your-domain.com/update?host=" + subdomain + "&domain=" + domain + "&password=" + token + "&ip=" + ip);
+                URLConnection conn = url.openConnection();
+
+                //Namecheap DDNS returns an XML response, so some silly String parsing shenanigans take place
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+
+                String ddnsResponse = bufferedReader.lines().collect(Collectors.joining("\n"));
+
+                if (ddnsResponse.contains("<ErrCount>1</ErrCount>")) {
+                    if (ddnsResponse.contains("<Description>Domain name not found</Description>")) {
+                        plugin.getLogger().warning("Error updating IP on Namecheap, domain name \"" + domain + "\" not found");
+                    }
+                    if (ddnsResponse.contains("<Description>No Records updated. A record not Found;</Description>")) {
+
+                        plugin.getLogger().warning("Error updating IP on Namecheap, no A record exists for subdomain \"" + subdomain + "\"");
+
+                    } else if (ddnsResponse.contains("<Description>Passwords do not match</Description>")) {
+                        plugin.getLogger().warning("Error updating IP on Namecheap, password is incorrect");
+                    }
+                } else {
+                    plugin.getLogger().info("Updated IP for " + subdomain + "." + domain + " on namecheap");
+                }
+
+            } catch (Exception e) {
+                plugin.getLogger().severe(e.getMessage());
             }
-
-        } catch (Exception e) {
-            plugin.getLogger().severe(e.getMessage());
         }
         return false;
     }
