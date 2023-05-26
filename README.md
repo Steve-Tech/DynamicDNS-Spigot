@@ -3,7 +3,7 @@ A dynamic DNS plugin for Spigot
 ### Commands:
 * `/DynamicDNS <update|list|reload>` 
   * `/DynamicDNS update [IP]`
-    * Description: Force updates the IP on your DDNS Services, the IP argument can also be used to overide the IP detection on the DDNS services (best to leave it blank)
+    * Description: Force updates the IP on your DDNS Services, the IP argument can also be used to override the IP detection on the DDNS services (best to leave it blank)
     * Permission: `dynamicdns.update`
     * Default: `op` without IP or `false` with IP
   * `/DynamicDNS list`
@@ -41,7 +41,7 @@ noip:
 
 namecheap:
   enabled: false
-  subdomain: @ # subdomain of server, use @ if none, multiple subdomains can be updated if separated by a comma ',' e.g. mc,map
+  subdomain: '@' # subdomain of server, use '@' if none, multiple subdomains can be updated if separated by a comma ',' e.g. mc,map
   domain: exampledomain.com
   token: xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx # The token under the "Advanced DNS" Section in your namecheap domain list
 
